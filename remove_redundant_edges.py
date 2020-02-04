@@ -1,5 +1,5 @@
 import argparse
-from itertools import islice
+import itertools
 
 
 
@@ -32,12 +32,22 @@ def main():
                 count_newline += 1
 
             if count_newline == 2:
-                for line in islice(f, 0, None, 2):
+                                
+                if line.split(";")[0] == "\n":
+                    continue
+
+                else:
+                    x, y, z = line.split(";")[0], line.split(";")[1], line.split(";")[2]
+
                     result += line
 
+                    a = next(f).split(";")
+                    if a[0] == y and a[1] == x and a[2] == z:
+                        continue
+
+        
     with open(output_file, "w") as o:
         o.write(result)
-
 
 if __name__ == "__main__":
     
