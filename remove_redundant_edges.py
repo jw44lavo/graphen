@@ -17,7 +17,12 @@ def main():
 
     list_edges = []
     
+    print()
+    print(input_file)
     for file in input_file:
+        
+        print()
+        print(file)
         file_name = file.split(".")[1]
         with open(file, "r") as f:
             result = ""
