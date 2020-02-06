@@ -1,11 +1,9 @@
 import argparse
-import itertools
-
 
 
 def get_arguments():
-    parser = argparse.ArgumentParser(usage="script to filter assembled contigs by length")
-    parser.add_argument("-i", "--input",        metavar="", default=[],     type = str, help= "path to input file")
+    parser = argparse.ArgumentParser(usage="remove redundant edges from graph file")
+    parser.add_argument("-i", "--input",        metavar="FILE", default=[],     type = str, help= "path to input file")
     parser.add_argument("-o", "--output",       metavar="", default=[],     type = str, help= "path to output file for contigs >= length ")
     
     return parser.parse_args()
@@ -17,35 +15,33 @@ def main():
     input_file = a.input
     output_file = a.output
 
+    list_edges = []
+
     with open(input_file, "r") as f:
-        count_newline = 0
-        count_line = 0
         result = ""
 
         for line in f:
-            count_line += 1 
 
-            if count_newline < 2:
+            if len(line.split(";")) < 3:
                 result += line
+            
+            if len(line.split(";")) == 3:
+                string = line.split(";")
+                list_edges.append([string[0], string[1], string[2].rstrip("\n")])
 
-            if line == "\n":
-                count_newline += 1
+    for i in list_edges:
+        j = [i[1], i[0], i[2]]
 
-            if count_newline == 2:
-                                
-                if line.split(";")[0] == "\n":
-                    continue
-
-                else:
-                    x, y, z = line.split(";")[0], line.split(";")[1], line.split(";")[2]
-
-                    result += line
-
-                    a = next(f).split(";")
-                    if a[0] == y and a[1] == x and a[2] == z:
-                        continue
-
+        if j in list_edges:
+            index = (list_edges.index(j))
+            list_edges.pop(index)
         
+        else:
+            continue
+
+    for i in list_edges:
+        result += str(i[0])+";"+str(i[1])+";"+str(i[2])+"\n"
+    
     with open(output_file, "w") as o:
         o.write(result)
 
