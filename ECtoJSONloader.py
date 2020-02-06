@@ -7,17 +7,15 @@ from collections import Counter
 import os
 import shutil
 
-BRENDA_PARSER = BrendaParser()
+
 
 def get_arguments():
     parser=argparse.ArgumentParser(usage="script to download json files from onlinedatabase of enzyme structures")
-    parser.add_argument("-s","--subtree", metavar="EC CODE", default="", type=str, help="coordinates of subtree as EC code")
+    parser.add_argument("-s","--subtree", metavar="EC", default="", type=str, help="coordinates of subtree as EC code")
     parser.add_argument("-n","--number", metavar="INT", default=10, type=int, help="number of json files to download")
     parser.add_argument("-c","--cutoff", metavar="INT", default=20, type=int, help="number of maximum Atoms in Structure (without H)")
 
     return parser.parse_args()
-
-######################################################
 
 def make_dir(ec):
     s = ec.split(".")
@@ -38,7 +36,7 @@ def select(list, search):
             selection.append(ec)
     return selection
 
-def new_enzyme_list():
+def new_enzyme_list(BRENDA_PARSER):
     el = []
     for ec in BRENDA_PARSER.keys():
         el.append(ec)
@@ -101,7 +99,7 @@ def choose_substrate(proteins):
         return None, None
     return most_common, counted
 
-def get_structure(code,cutoff,dir_search):
+def get_structure(BRENDA_PARSER,code,cutoff,dir_search):
     dir_path=os.path.dirname(os.path.realpath(__file__))
     print("GET STRUCTURE FILES...")
     proteins = BRENDA_PARSER.get_proteins(code)
@@ -131,7 +129,7 @@ def get_structure(code,cutoff,dir_search):
     return True
 
 
-def get_structure_files(list,anz,cutoff,dir_search):
+def get_structure_files(BRENDA_PARSER,list,anz,cutoff,dir_search):
     enzymes = list
     result_list = []
     while len(result_list) < anz:
@@ -148,15 +146,16 @@ def get_structure_files(list,anz,cutoff,dir_search):
 
 def main():
     a = get_arguments()
+    BRENDA_PARSER = BrendaParser()
     cutoff = a.cutoff
     anz = a.number
     search = a.subtree
 
     dir_search = make_dir(search)
-    enzyme_list = new_enzyme_list()
+    enzyme_list = new_enzyme_list(BRENDA_PARSER)
     enzym_selection = select(enzyme_list, search)
 
-    if get_structure_files(enzym_selection,anz,cutoff,dir_search):
+    if get_structure_files(BRENDA_PARSER,enzym_selection,anz,cutoff,dir_search):
         print("SUCCESS: Structures found and downloaded")
     else:
         print("ERROR: Not enough processible structures available")
