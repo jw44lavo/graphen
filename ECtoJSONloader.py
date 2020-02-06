@@ -7,7 +7,17 @@ from collections import Counter
 import os
 import shutil
 
+################################################################
+## Strings in list "minis" will be filtered in chemical equation
+## Add '+' with whitespace at the beginning and the end
+def remove_minis(string):
+    minis = ["+ TTP","TTP +","+ UTP","UTP +","+ ITP","ITP +","+ GTP","GTP +","+ CTP","CTP +","+ ADP","ADP +","CoA +","+ CoA","acetate +","+ acetate","+ H2O","H2O +", "+ ATP", "ATP +", "ATP","+ 2 H2O", "CO2", "+ NAD+", "NAD+ +"]
+    for i in minis:
+        string = string.replace(i, "")
+    return string
 
+################################################################
+################################################################
 
 def get_arguments():
     parser=argparse.ArgumentParser(usage="script to download json files from onlinedatabase of enzyme structures")
@@ -58,6 +68,7 @@ def check_size_of_substrate(name, cutoff):
         print("substrate not found..")
         return False
     if len(p) == 0:
+        print("substrate not found..")
         return False
     c = pcp.Compound.from_cid(p[0])
     c = c.to_dict(properties=['atoms', 'bonds', 'inchi'])
@@ -65,14 +76,10 @@ def check_size_of_substrate(name, cutoff):
         if atom['element'] is not 'H':
             counter += 1
             if counter > cutoff:
+                print("Strukture of Substrate too big")
                 return False
     return True
 
-def remove_minis(string):
-    minis = ["+ H2O","H2O +", "+ ATP", "ATP +", "+ 2 H2O", "CO2", "+ NAD+", "NAD+ +"]
-    for i in minis:
-        string = string.replace(i, "")
-    return string
 
 def choose_substrate(proteins):
     substrates=[]
@@ -84,10 +91,8 @@ def choose_substrate(proteins):
                 first = remove_minis(line[0])
                 if "more" in str(first):
                     continue
-                # try:
-                #     p = pcp.get_cids(first, 'name', 'substance', list_return='flat')
-                # except:
-                #     continue
+                if len(str(first)) == 0:
+                    continue
                 substrates.append(first)
         except:
             continue
@@ -104,7 +109,7 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
     print("GET STRUCTURE FILES...")
     proteins = BRENDA_PARSER.get_proteins(code)
     substrate, counted = choose_substrate(proteins)
-    substrate = str(substrate).rstrip()
+    #substrate = str(substrate).rstrip()
     if substrate == None:
         print("No suitable substrate found, skip..")
         return False
@@ -118,9 +123,8 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
         print("\nProtein uses several substrates, skip it..")
         return False
     if check_size_of_substrate(substrate,cutoff) == False:
-        print('\nStrukture of Substrate is too big, skip it..')
         return False
-    file = (f'{code}_{substrate}.json')
+    file = (f'{code}_{str(substrate).strip()}.json')
     try:
         pcp.download('JSON', file, substrate, 'name')
     except:
