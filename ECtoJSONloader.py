@@ -104,7 +104,7 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
     print("GET STRUCTURE FILES...")
     proteins = BRENDA_PARSER.get_proteins(code)
     substrate, counted = choose_substrate(proteins)
-    substrate = substrate.rstrip()
+    substrate = str(substrate).rstrip()
     if substrate == None:
         print("No suitable substrate found, skip..")
         return False
