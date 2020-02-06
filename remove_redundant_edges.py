@@ -16,34 +16,37 @@ def main():
     output_file = a.output
 
     list_edges = []
-
-    with open(input_file, "r") as f:
-        result = ""
-
-        for line in f:
-
-            if len(line.split(";")) < 3:
-                result += line
-            
-            if len(line.split(";")) == 3:
-                string = line.split(";")
-                list_edges.append([string[0], string[1], string[2].rstrip("\n")])
-
-    for i in list_edges:
-        j = [i[1], i[0], i[2]]
-
-        if j in list_edges:
-            index = (list_edges.index(j))
-            list_edges.pop(index)
-        
-        else:
-            continue
-
-    for i in list_edges:
-        result += str(i[0])+";"+str(i[1])+";"+str(i[2])+"\n"
     
-    with open(output_file, "w") as o:
-        o.write(result)
+    for file in input_file:
+        file_name = file.split(".")[1]
+        with open(file, "r") as f:
+            result = ""
+    
+            for line in f:
+    
+                if len(line.split(";")) < 3:
+                    result += line
+                
+                if len(line.split(";")) == 3:
+                    string = line.split(";")
+                    list_edges.append([string[0], string[1], string[2].rstrip("\n")])
+    
+        for i in list_edges:
+            j = [i[1], i[0], i[2]]
+    
+            if j in list_edges:
+                index = (list_edges.index(j))
+                list_edges.pop(index)
+            
+            else:
+                continue
+    
+        for i in list_edges:
+            result += str(i[0])+";"+str(i[1])+";"+str(i[2])+"\n"
+        
+        with open(output_file + file_name + ".graph", "w") as o:
+            o.write(result)
+        
 
 if __name__ == "__main__":
     
