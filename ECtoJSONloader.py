@@ -99,7 +99,7 @@ def choose_substrate(proteins):
         return None, None
     return most_common, counted
 
-def get_structure(BRENDA_PARSER,code,cutoff,dir_search):
+def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
     dir_path=os.path.dirname(os.path.realpath(__file__))
     print("GET STRUCTURE FILES...")
     proteins = BRENDA_PARSER.get_proteins(code)
@@ -129,7 +129,7 @@ def get_structure(BRENDA_PARSER,code,cutoff,dir_search):
     return True
 
 
-def get_structure_files(BRENDA_PARSER,list,anz,cutoff,dir_search):
+def get_structure_files(list,anz,cutoff,dir_search,BRENDA_PARSER):
     enzymes = list
     result_list = []
     while len(result_list) < anz:
@@ -138,7 +138,7 @@ def get_structure_files(BRENDA_PARSER,list,anz,cutoff,dir_search):
         sampling = random.choice(enzymes)
         enzymes.remove(sampling)
         print("\n\n",sampling)
-        if get_structure(sampling,cutoff,dir_search) == True:
+        if get_structure(sampling,cutoff,dir_search,BRENDA_PARSER) == True:
             result_list.append(sampling)
     return True
 
@@ -155,7 +155,7 @@ def main():
     enzyme_list = new_enzyme_list(BRENDA_PARSER)
     enzym_selection = select(enzyme_list, search)
 
-    if get_structure_files(BRENDA_PARSER,enzym_selection,anz,cutoff,dir_search):
+    if get_structure_files(enzym_selection,anz,cutoff,dir_search,BRENDA_PARSER):
         print("SUCCESS: Structures found and downloaded")
     else:
         print("ERROR: Not enough processible structures available")
