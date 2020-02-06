@@ -3,18 +3,32 @@ process get_json_from_brenda {
   //publishDir "$baseDir/results",  mode: "copy"
 
   input:
-    val w   //EC-number
+    val w   //EC-subtree
     val x   //cutoff of vertices
     val y   //number of substrates
 
   output:
-    path "test", type: "dir"
+    //path "EC_*", type: "dir"
+
   script:
     """
-    python3 $baseDir/scripts/ECtoJSONloader.py -c $x -n $y
+    python3 $baseDir/scripts/ECtoJSONloader.py -c $x -n $y -s $w
     """
 }
 
+process get_valid_names {
+
+  input:
+    file x
+
+  output:
+    file "*"
+
+  script:
+    """
+    python3 $baseDir/scripts/valid_names.py -i $x
+    """
+}
 
 process json2graph {
   //publishDir "$baseDir/results",  mode: "copy"
@@ -27,7 +41,7 @@ process json2graph {
 
   script:
     """
-    python3 ~/OneDrive/Projects/git/BestesRepository/GraphDating.py -i $x -if json -go ${x.baseName}.graph
+    python3 $baseDir/scripts/graphDating/GraphDating.py -i $x -if json -go ${x.baseName}.graph
     """
 }
 
