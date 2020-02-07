@@ -24,17 +24,19 @@ def get_arguments():
     parser.add_argument("-s","--subtree", metavar="EC", default="", type=str, help="coordinates of subtree as EC code")
     parser.add_argument("-n","--number", metavar="INT", default=10, type=int, help="number of json files to download")
     parser.add_argument("-c","--cutoff", metavar="INT", default=20, type=int, help="number of maximum Atoms in Structure (without H)")
+    parser.add_argument("-o","--output", metavar="PATH", default="./", type=str, help="set output directory")
 
     return parser.parse_args()
 
-def make_dir(ec):
+def make_dir(ec, output):
     s = ec.split(".")
-    dir_path=os.path.dirname(os.path.realpath(__file__))
+    dir_path= output  #os.path.dirname(os.path.realpath(__file__))
     dir_search="EC"
     for i in s:
         dir_search=f"{dir_search}_{i}"
     try:
         os.mkdir(f"{dir_path}/{dir_search}")
+        dir_search=f"{dir_path}/{dir_search}"
     except:
         print("mkdir failed")
     return dir_search
@@ -105,7 +107,6 @@ def choose_substrate(proteins):
     return most_common, counted
 
 def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
-    dir_path=os.path.dirname(os.path.realpath(__file__))
     print("GET STRUCTURE FILES...")
     proteins = BRENDA_PARSER.get_proteins(code)
     substrate, counted = choose_substrate(proteins)
@@ -124,13 +125,12 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
         return False
     if check_size_of_substrate(substrate,cutoff) == False:
         return False
-    file = (f'{code}_{str(substrate).strip()}.json')
+    file = (f'{dir_search}/{code}_{str(substrate).strip()}.json')
     try:
         pcp.download('JSON', file, substrate, 'name')
     except:
         print("substrate not found..")
         return False
-    os.replace(f"{dir_path}/{file}", f"{dir_path}/{dir_search}/{file}")
     return True
 
 
@@ -155,8 +155,9 @@ def main():
     cutoff = a.cutoff
     anz = a.number
     search = a.subtree
+    output = a.output
 
-    dir_search = make_dir(search)
+    dir_search = make_dir(search, output)
     enzyme_list = new_enzyme_list(BRENDA_PARSER)
     enzym_selection = select(enzyme_list, search)
 
