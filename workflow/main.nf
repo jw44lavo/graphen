@@ -11,7 +11,7 @@ workflow {
     
     main:
 
-        json = Channel.fromPath(params.json)
+        //json = Channel.fromPath(params.json)
 
 //      HYDROGEN DECISION
 /*
@@ -73,16 +73,19 @@ workflow {
             log.info "no information about visualisation given - see 'nextflow.config' "
         }
 */      
-        json = Channel.fromPath("$baseDir/data/json/*.json")
-        
-        graph = json.collect()
-        graph.subscribe{print "$it"}
-
-        //alignment = graphDating_align(graph.collect(), "mb")
-
-        //graphDating_visualise(remove_redundant_edges_2(alignment), params.neo4j_http, params.neo4j_user, params.neo4j_password)
-        
+        get_json_from_brenda(params.ec_subtree, params.ec_cutoff, params.ec_number)
+    //    json2graph(json)
+    //    get_valid_names(json2graph.out)
+    //   remove_redundant_edges(get_valid_names.out)
 
     log.info "############################"
     
+
+    publish:
+
+        //remove_redundant_edges.out to: "${params.publish}", mode: "copy"
+        get_json_from_brenda.out to: "${params.publish}", mode: "copy"
+
+
+
 }
