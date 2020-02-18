@@ -1,0 +1,10 @@
+#nodes;2
+#edges;1
+nodes labelled;True
+edges labelled;True
+directed graph;False
+
+1;6
+2;6
+
+1;2;3
