@@ -18,7 +18,7 @@ def remove_minis(string):
 
 ################################################################
 ################################################################
-https://github.com/Tschichen/MIGRAINE
+
 def get_arguments():
     parser=argparse.ArgumentParser(usage="script to download json files from onlinedatabase of enzyme structures")
     parser.add_argument("-s","--subtree", metavar="EC", default="", type=str, help="coordinates of subtree as EC code")
