@@ -18,7 +18,7 @@ def remove_minis(string):
 
 ################################################################
 ################################################################
-
+https://github.com/Tschichen/MIGRAINE
 def get_arguments():
     parser=argparse.ArgumentParser(usage="script to download json files from onlinedatabase of enzyme structures")
     parser.add_argument("-s","--subtree", metavar="EC", default="", type=str, help="coordinates of subtree as EC code")
@@ -125,7 +125,9 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
         return False
     if check_size_of_substrate(substrate,cutoff) == False:
         return False
-    file = (f'{dir_search}/{code}_{str(substrate).strip()}.json')
+    #file = (f'{dir_search}/{code}_{str(substrate).strip()}.json')
+    file = (f'{dir_search}/{str(substrate).strip()}.json')
+
     try:
         pcp.download('JSON', file, substrate, 'name')
     except:
