@@ -1,0 +1,10 @@
+161	16alpha-hydroxyprogesterone.graph_output
+D-1	D-glucarate.graph_output
+D-2	D-gluconate.graph_output
+L-1	L-Arabinonate.graph_output
+L-2	L-arogenate.graph_output
+L-3	L-talarate.graph_output
+Ph1	Phaseollidin.graph_output
+Ur1	Urocanate.graph_output
+be1	beta-methoxysynephrine.graph_output
+di1	dimethylmaleate.graph_output
