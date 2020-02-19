@@ -1,21 +1,4 @@
 
-process get_json_from_brenda {
-  //publishDir "$baseDir/results",  mode: "copy"
-
-  input:
-    val w   //EC-subtree
-    val x   //cutoff of vertices
-    val y   //number of substrates
-
-  output:
-    //path "EC_*", type: "dir"
-
-  script:
-    """
-    python3 $baseDir/scripts/ECtoJSONloader.py -c $x -n $y -s $w
-    """
-}
-
 process get_valid_names {
 
   input:
@@ -57,7 +40,7 @@ process json2graph_without_hydrogen {
 
   script:
     """
-    python3 $baseDir/scripts/graphDating/GraphDating.py -i $x -nh -if json -go ${x.baseName}.graph
+    python3 $baseDir/scripts/graphDating/GraphDating.py -i "${x}" -nh -if json -go ${x.baseName}.graph
     """
 }
 
@@ -97,25 +80,15 @@ process graphDating_align {
 
 process multiVitamin_align {
   input:
+    file x
   
   output:
+    file "output.graph"
   
   script:
-  """
-  
-  """
-}
-
-
-process migrane_align {
-  input:
-  
-  output:
-  
-  script:
-  """
-  
-  """
+    """
+    multiVitamin -i $x -a subVF2
+    """
 }
 
 process graphDating_visualise {
