@@ -11,10 +11,10 @@ workflow {
     
     main:
 
-        //json = Channel.fromPath(params.json)
+        json = Channel.fromPath(params.json)
 
 //      HYDROGEN DECISION
-/*
+
         if (params.without_hydrogen == "false"){
             graph = json2graph(json)
         }
@@ -24,7 +24,9 @@ workflow {
         else {
             log.info "no information about hydrogen given - see 'nextflow.config'"
         }
-*/
+
+
+
 //      ALIGNMENT TYPE DECISION
 /*
         if (params.alignment_type == "matching_based"){
@@ -47,16 +49,6 @@ workflow {
             remove_redundant_edges(graph)
             alignment = multiVitamin_align()
         }
-        else if (params.program_type == "migrane"){
-            remove_redundant_edges(graph)
-            alignment = migrane_align()
-        }
-        else if (params.program_type == "all"){
-            graphDating_align()
-            remove_redundant_edges(graph)
-            multiVitamin_align()
-            migrane_align()
-        }
         else {
             log.info "no program type given - see 'nextflow.config' "
         }
@@ -69,22 +61,20 @@ workflow {
         else if (params.visualisation == "true" && params.alignment_type != "all"){
             graphDating_visualise(alignment, params.neo4j_http, params.neo4j_user, params.neo4j_password)
         }
+        else if (params.visualisation == "false"){
+            log.info "no visualisaiton wanted"
+        }
         else {
             log.info "no information about visualisation given - see 'nextflow.config' "
         }
-*/      
-        get_json_from_brenda(params.ec_subtree, params.ec_cutoff, params.ec_number)
-    //    json2graph(json)
-    //    get_valid_names(json2graph.out)
-    //   remove_redundant_edges(get_valid_names.out)
-
+     
+*/
     log.info "############################"
     
 
     publish:
-
-        //remove_redundant_edges.out to: "${params.publish}", mode: "copy"
-        get_json_from_brenda.out to: "${params.publish}", mode: "copy"
+        graph to: "${params.publish}", mode: "copy"
+        
 
 
 
