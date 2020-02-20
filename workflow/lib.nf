@@ -1,18 +1,4 @@
 
-process get_valid_names {
-
-  input:
-    file x
-
-  output:
-    file "*"
-
-  script:
-    """
-    python3 $baseDir/scripts/valid_names.py -i $x
-    """
-}
-
 process json2graph {
   //publishDir "$baseDir/results",  mode: "copy"
 
@@ -40,30 +26,12 @@ process json2graph_without_hydrogen {
 
   script:
     """
-    python3 $baseDir/scripts/graphDating/GraphDating.py -i "${x}" -nh -if json -go ${x.baseName}.graph
-    """
-}
-
-
-process remove_redundant_edges {
-  //publishDir "$baseDir/results",  mode: "copy"
-
-  input:
-    file x
-  
-  output:
-    file "${x.baseName}.graph"
-  
-  script:
-    """
-    python3 $baseDir/scripts/remove_redundant_edges.py -i $x -o ${x.baseName}.graph
+    python3 $baseDir/scripts/graphDating/GraphDating.py -i ${x} -nh -if json -go ${x.baseName}.graph
     """
 }
 
 
 process graphDating_align {
-  publishDir "$baseDir/results",  mode: "copy"
-
   input:
     file x
     each y
@@ -83,11 +51,11 @@ process multiVitamin_align {
     file x
   
   output:
-    file "output.graph"
+    path "results"
   
   script:
     """
-    multiVitamin -i $x -a subVF2
+    multiVitamin -ri $x -a subVF2
     """
 }
 
@@ -104,5 +72,34 @@ process graphDating_visualise {
   script:
     """
     python3 $baseDir/scripts/graphDating/GraphDating.py -i $x -n "$y1" "$y2" "$y3"
+    """
+}
+
+
+process load_substrates {
+
+  input:
+  
+  output:
+    path "EC_*/*.json"
+  
+  script:
+    """
+    python3 $baseDir/scripts/ECtoJSONloader.py
+    """
+}
+
+
+process get_nice_names {
+
+  input:
+    file x
+
+  output:
+    file "*"
+
+  script:
+    """
+    python3 $baseDir/scripts/valid_names.py -i $x
     """
 }

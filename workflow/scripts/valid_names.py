@@ -19,7 +19,7 @@ def main():
         for line in f:
             results += line
 
-    output_file = input_file.split("_")[0]
+    output_file = input_file.split(".")[0]
     endung = input_file.split(".")[-1]
 
     output_file = output_file + "." + endung  

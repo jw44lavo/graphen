@@ -1,8 +1,7 @@
 nextflow.preview.dsl=2
 
 include "./lib.nf"
-include remove_redundant_edges as remove_redundant_edges_1 from "./lib.nf"
-include remove_redundant_edges as remove_redundant_edges_2 from "./lib.nf"
+
 
 
 workflow {
@@ -16,10 +15,10 @@ workflow {
 //      HYDROGEN DECISION
 
         if (params.without_hydrogen == "false"){
-            graph = json2graph(json)
+            graph = get_nice_names(json2graph(json))
         }
         else if (params.without_hydrogen == "true"){
-            graph = json2graph_without_hydrogen(json)
+            graph = get_nice_names(json2graph_without_hydrogen(json))
         }
         else {
             log.info "no information about hydrogen given - see 'nextflow.config'"
@@ -28,7 +27,7 @@ workflow {
 
 
 //      ALIGNMENT TYPE DECISION
-/*
+
         if (params.alignment_type == "matching_based"){
             alignment_type = "mb"
         }
@@ -39,22 +38,24 @@ workflow {
             log.info "no alignment type given - see 'nextflow.config'"
 
         }
-*/
+
 //      ALIGNMENT
-/*
+
         if (params.program_type == "graphDating"){
             alignment = graphDating_align(graph.collect(), alignment_type)
         }
         else if (params.program_type == "multiVitamin"){
-            remove_redundant_edges(graph)
-            alignment = multiVitamin_align()
+            alignment = multiVitamin_align(graph.collect())
+        }
+        else if (params.program_type == "nothing"){
+            log.info "no alignment wanted"
         }
         else {
             log.info "no program type given - see 'nextflow.config' "
         }
-*/
+
 //      VISUALISATION
-/*
+
         if (params.visualisation == "true" && params.alignment_type == "all"){
             log.info "can not visualise all alignments at once"
         }
@@ -68,14 +69,13 @@ workflow {
             log.info "no information about visualisation given - see 'nextflow.config' "
         }
      
-*/
+
     log.info "############################"
     
 
     publish:
-        graph to: "${params.publish}", mode: "copy"
-        
+        graph to: "${params.publish_graphs}", mode: "copy"
 
-
+        alignment to: "${params.publish_alignments}", mode: "copy"     
 
 }
