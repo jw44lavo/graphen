@@ -161,6 +161,18 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
 def get_structure_files(list,anz,cutoff,dir_search,BRENDA_PARSER):
     enzymes = list
     result_list = []
+    for e in enzymes:
+        if len(enzymes) == 0:
+            return False
+        print("\n\n",e)
+        if get_structure(e,cutoff,dir_search,BRENDA_PARSER) == True:
+            result_list.append(e)
+    return True
+
+"""
+def get_structure_files(list,anz,cutoff,dir_search,BRENDA_PARSER):
+    enzymes = list
+    result_list = []
     while len(result_list) < anz:
         if len(enzymes) == 0:
             return False
@@ -170,7 +182,7 @@ def get_structure_files(list,anz,cutoff,dir_search,BRENDA_PARSER):
         if get_structure(sampling,cutoff,dir_search,BRENDA_PARSER) == True:
             result_list.append(sampling)
     return True
-
+"""
 ######################################################################
 
 def main():
