@@ -1,0 +1,1 @@
+while IFS=$'\t' read -r -a myArray; do python3 ECtoJSONloader.py -s "${myArray[0]}"  -n "${myArray[1]}" -c "${myArray[2]}" -o data; done < config.txt

@@ -61,12 +61,10 @@ def make_dir(ec, output):
     for i in s:
         dir_search=f"{dir_search}_{i}"
     path = os.path.join(os.getcwd(),dir_path, dir_search)
-    print(path)
     try:
         os.makedirs(path)
     except:
         print("mkdir failed")
-    
     return path
 
 def select(list, search):
@@ -82,13 +80,11 @@ def new_enzyme_list(BRENDA_PARSER):
         el.append(ec)
     return el
 
-
 def check_for_char(string):
     for c in string:
         if c.isalpha():
             return False
     return True
-
 
 def check_size_of_substrate(CID, cutoff):
     counter=0
@@ -101,7 +97,6 @@ def check_size_of_substrate(CID, cutoff):
                 print("Structure of Substrate too big")
                 return False
     return True
-
 
 def choose_substrate(proteins):
     substrates=[]
@@ -125,16 +120,14 @@ def choose_substrate(proteins):
     return most_common, counted
 
 def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
-    print("GET STRUCTURE FILES...")
     proteins = BRENDA_PARSER.get_proteins(code)
     substrate, counted = choose_substrate(proteins)
 
     if substrate == None:
         print("No suitable substrate found, skip..")
         return False
-    for s in counted:
-        print(str(counted[s]), " : \t", s )
-        
+    #for s in counted:
+        #print(str(counted[s]), " : \t", s )
     print("\nmost common: ", substrate)
     
     try:
@@ -143,46 +136,29 @@ def get_structure(code,cutoff,dir_search,BRENDA_PARSER):
         print("CID not found..")
         return False
     
-    if check_size_of_substrate(CID,cutoff) == False:
-        return False
+    if cutoff:
+        if check_size_of_substrate(CID,cutoff) == False:
+            return False
 
     file = (f'{dir_search}/{CID}.json')
     #file = (f'{dir_search}/{str(substrate).strip()}.json')
-    
     try:
         pcp.download('JSON', file, CID, 'cid')
-        print("Success, file loaded..")
     except:
-        print("substrate not found..")
         return False
     return True
 
 
 def get_structure_files(list,anz,cutoff,dir_search,BRENDA_PARSER):
     enzymes = list
-    result_list = []
     for e in enzymes:
-        if len(enzymes) == 0:
-            return False
         print("\n\n",e)
         if get_structure(e,cutoff,dir_search,BRENDA_PARSER) == True:
-            result_list.append(e)
-    return True
+            print("Success, file loaded..")
+        else:
+            print("substrate not found..")
+    return
 
-"""
-def get_structure_files(list,anz,cutoff,dir_search,BRENDA_PARSER):
-    enzymes = list
-    result_list = []
-    while len(result_list) < anz:
-        if len(enzymes) == 0:
-            return False
-        sampling = random.choice(enzymes)
-        enzymes.remove(sampling)
-        print("\n\n",sampling)
-        if get_structure(sampling,cutoff,dir_search,BRENDA_PARSER) == True:
-            result_list.append(sampling)
-    return True
-"""
 ######################################################################
 
 def main():
@@ -196,12 +172,11 @@ def main():
     dir_search = make_dir(search, output)
     enzyme_list = new_enzyme_list(BRENDA_PARSER)
     enzym_selection = select(enzyme_list, search)
-    
 
-    if get_structure_files(enzym_selection,anz,cutoff,dir_search,BRENDA_PARSER):
-        print("SUCCESS: Structures found and downloaded")
-    else:
-        print("ERROR: Not enough processible structures available")
+    get_structure_files(enzym_selection,anz,cutoff,dir_search,BRENDA_PARSER)
+    
+    print("habe fertig!")
+
 
 ######################################################################
 
